@@ -6,7 +6,7 @@ title: Setup and options
 To get started with Apollo and React, install the `react-apollo` npm package. This exports everything you need to get started, even though there are several packages involved under the hood.
 
 ```bash
-npm install react-apollo --save
+npm install apollo-client apollo-cache-inmemory apollo-link-http react-apollo --save
 ```
 
 > Note: You don't have to do anything special to get Apollo Client to work in React Native, just install and import it as usual.
@@ -21,7 +21,7 @@ To get started using Apollo with React, we need to create an `ApolloClient` and 
 To get started, create an [`ApolloClient`](/core/apollo-client-api.html#constructor) instance and point it at your GraphQL server:
 
 ```js
-import { ApolloClient } from 'react-apollo';
+import { ApolloClient } from 'apollo-client';
 
 // By default, this client will send queries to the
 //  `/graphql` endpoint on the same host
@@ -31,14 +31,17 @@ const client = new ApolloClient();
 The client takes a variety of [options](/core/apollo-client-api.html#constructor), but in particular, if you want to change the URL of the GraphQL server, you can create a custom [`NetworkInterface`](/core/apollo-client-api.html#NetworkInterface):
 
 ```js
-import { ApolloClient, createNetworkInterface } from 'react-apollo';
+import { ApolloClient } from 'apollo-client';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { createHttpLink } from 'apollo-link-http';
 
-const networkInterface = createNetworkInterface({
+const link = createHttpLink({
   uri: 'http://api.example.com/graphql'
 });
 
 const client = new ApolloClient({
-  networkInterface: networkInterface
+  link: link,
+  cache: new InMemoryCache()
 });
 ```
 
@@ -49,7 +52,8 @@ const client = new ApolloClient({
 To connect your client instance to your component tree, use an `ApolloProvider` component. We suggest putting the `ApolloProvider` somewhere high in your view hierarchy, above any places where you need to access GraphQL data. For example, it could be outside of your root route component if you're using React Router.
 
 ```js
-import { ApolloClient, ApolloProvider } from 'react-apollo';
+import { ApolloClient } from 'apollo-client';
+import { ApolloProvider } from 'react-apollo';
 
 // Create the client as outlined above
 const client = new ApolloClient();
